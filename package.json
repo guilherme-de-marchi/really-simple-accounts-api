@@ -1,0 +1,22 @@
+{
+  "name": "accounts-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Guilherme-De-Marchi/really-simple-accounts-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Guilherme-De-Marchi/really-simple-accounts-api/issues"
+  },
+  "homepage": "https://github.com/Guilherme-De-Marchi/really-simple-accounts-api#readme",
+  "dependencies": {
+    "sqlite3": "^5.0.2"
+  }
+}
