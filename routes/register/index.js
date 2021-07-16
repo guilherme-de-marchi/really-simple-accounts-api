@@ -1,6 +1,6 @@
 const fs = require('fs');
 const queryString = require('querystring')
-const registerRequest = require('./register_request');
+const register = require('./register');
 
 const httpMethods = new Map();
 httpMethods.set('POST', post);
@@ -18,7 +18,17 @@ function post(req, res) {
 
     req.on('data', (chunk) => {
         var arguments = queryString.parse(decodeURIComponent(chunk))
-        registerRequest(arguments.username, arguments.password).register();
+        register(
+            arguments.username, 
+            arguments.password
+        ).then((value) => {
+            if (value) {
+                res.statusCode = 201;
+            } else {
+                res.statusCode = 406;
+            }
+            res.end()
+        });
     });
 }
 

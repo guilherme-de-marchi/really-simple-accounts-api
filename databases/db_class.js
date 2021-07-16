@@ -1,42 +1,43 @@
 const sqlite3 = require('sqlite3');
-const db = require("./accounts");
 
 class Database {
     constructor(path) {
-        this._db = new sqlite3.Database(path, error => this.default_callback(error));
-        this.lastReturnedData;
+        this._db = new sqlite3.Database(path, error => { if (error) console.log(error) });
     }
 
     create(table, columns) {
         this._db.run(
-            `create table if not exists ? (name text)`,
-            table,
-            error => this.default_callback(error)
+            `create table if not exists ${table} (${columns.join(', ')})`,
+            (error) => {
+                if (error) throw error;
+            }
         );
     }
 
     insert(table, columns, values) {
-        this._db.run(
-            `insert into ? ${this.get_placeholders(columns)} values ${this.get_placeholders(values)}`,
-            table.concat(columns, values),
-            error => this.default_callback(error)
-        );
+        return new Promise((resolve, reject) => {
+            this._db.run(
+                `insert into ${table} (${columns.join(', ')}) values (${values.map(element => `'${element}'`).join(', ')})`,
+                (error) => {
+                    console.log(`New insertion into ${table}: ${columns, values}`)
+                    if (error) reject(error);
+                    resolve();
+                }
+            );
+        });
     }
 
-    select_all(targets, table, additional='') {
-        this._db.all(
-            `select ${this.get_placeholders(targets)} from ? ${additional}`,
-            targets.concat(table),
-            (error, data) => this.default_callback(error, data)
-        );
-    }
-
-    default_callback(error, data) {
-        if (error) {
-            console.log(error);
-        } else {
-            this.lastReturnedData = data;
-        }
+    select(targets, table, additional='') {
+        return new Promise((resolve, reject) => {
+            this._db.all(
+                `select ${targets.join(', ')} from ${table} ${additional}`,
+                (error, data) => {
+                    console.log(`New selection from ${table}: ${targets, additional}`)
+                    if (error) reject(error);
+                    resolve(data);
+                }
+            );
+        });
     }
 
     get_placeholders(arr) {
